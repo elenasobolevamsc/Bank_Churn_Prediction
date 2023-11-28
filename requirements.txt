@@ -4,3 +4,6 @@ xgboost
 imbalanced-learn
 optuna
 mlflow
+fastapi
+pydantic
+uvicorn
