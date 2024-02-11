@@ -11,7 +11,7 @@ deploy_staging:
     - cp $project_key  /tmp/service-acct.json #Used for auth. первая переменная в gitlab
     - gcloud auth activate-service-account --key-file=/tmp/service-acct.json
     - gcloud config set project $project_name #вторая переменная в gitlab
-    - gcloud builds submit  --config=cloudbuild.yaml --substitutions=_PROJECT_ID=$project_id,_ARTIFACT_REPO=$ARTIFACT_REPO,_ENV_IMG_NAME=$ENV_IMG_NAME,_ENV=$ENV,_SERVICE_NAME=$SERVICE_NAME . # строит имидж
+    - gcloud builds submit  --config=cloudbuild.yaml --substitutions=_PROJECT_ID=$project_name,_ARTIFACT_REPO=$ARTIFACT_REPO,_ENV_IMG_NAME=$ENV_IMG_NAME,_ENV=$ENV,_SERVICE_NAME=$SERVICE_NAME . # строит имидж
   variables:
     ENV_IMG_NAME: "api" #название имиджа
     ENV: "bank-churn-prediction" #name in artifact registry
