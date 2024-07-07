@@ -11,7 +11,14 @@ if st.sidebar.button('predict'):
             df = pd.read_csv(uploaded_file)
 
         if uploaded_file.name.endswith('.xlsx'):
-            df = pd.read_excel(uploaded_file)
+            df_new = pd.read_excel(uploaded_file)
+            if len(df_new.columns) == 1:
+                df = pd.DataFrame(data=df_new[df_new.columns[0]].str.split(',', expand=True))
+                df.columns = df_new.columns[0].split(',')
+                for col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors='ignore')
+            else:
+                df = df_new
 
         st.dataframe(df)
 

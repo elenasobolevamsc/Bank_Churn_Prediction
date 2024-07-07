@@ -1,7 +1,6 @@
 import pandas as pd
 import sklearn
 import joblib
-import numpy as np
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -14,7 +13,6 @@ model_loaded = joblib.load('./best_model.pkl')
 
 class Dataframe(BaseModel):
     data: str
-
 
 @app.post("/best_model")
 async def best_model(one_var: Dataframe):
