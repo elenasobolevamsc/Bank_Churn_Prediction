@@ -1,19 +1,24 @@
-image: google/cloud-sdk:alpine
+stages:
+  - build
+  - deploy
 
-deploy_staging:
-  stage: deploy
-  environment: staging
-  only:
-    - main
+build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
   script:
-    - echo $ARTIFACT_REPO
-    - echo $project_name
-    - cp $project_key  /tmp/service-acct.json #Used for auth. первая переменная в gitlab
-    - gcloud auth activate-service-account --key-file=/tmp/service-acct.json
-    - gcloud config set project $project_name #вторая переменная в gitlab
-    - gcloud builds submit  --config=cloudbuild.yaml --substitutions=_PROJECT_ID=$project_name,_ARTIFACT_REPO=$ARTIFACT_REPO,_ENV_IMG_NAME=$ENV_IMG_NAME,_ENV=$ENV,_SERVICE_NAME=$SERVICE_NAME . # строит имидж
-  variables:
-    ENV_IMG_NAME: "api" #название имиджа
-    ENV: "bank-churn-prediction" #name in artifact registry
-    ARTIFACT_REPO: "bank-churn-prediction" #name in artifact registry
-    SERVICE_NAME: "api" #так называется в клаудране
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(echo -n "json_key:${CI_REGISTRY_KEY}" | base64 | tr -d '\n' )\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}"
+
+deploy:
+  image: bitnami/kubectl:latest
+  stage: deploy
+  script:
+    - kubectl config use-context ${CI_PROJECT_PATH}:first-agent
+    - cat k8s.yaml | sed -e "s,__VERSION__,${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}," | kubectl apply -f -

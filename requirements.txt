@@ -10,6 +10,4 @@ fastapi==0.104.1
 pydantic==2.5.2
 uvicorn==0.24.0.post1
 matplotlib==3.8.1
-seaborn
-openpyxl
-xlsxwriter
+ы
