@@ -32,6 +32,6 @@ deploy:
   image: bitnami/kubectl:latest
   stage: deploy
   script:
-    - kubectl config use-context ${CI_PROJECT_PATH}:<имя_GitLab_Agent>
+    - kubectl config use-context ${CI_PROJECT_PATH}:first-agent
     - cat k8s.yaml | sed -e "s,__VERSION__,${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}," | kubectl apply -f -
 
