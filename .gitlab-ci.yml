@@ -24,14 +24,14 @@ build:
     - >- # builds a Docker image from the Dockerfile located in the project directory, tagging it with the commit SHA for versioning
       docker build
       "${CI_PROJECT_DIR}"
-      --file "${CI_PROJECT_DIR}/Dockerfile"
+#      --file "${CI_PROJECT_DIR}/Dockerfile"
       --tag "${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}"
     - docker push "${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}" # pushes the built Docker image to the specified registry, making it available for deployment
 
 deploy:
-  image: bitnami/kubectl:latest
+  image: bitnami/kubectl:latest # uses the latest Bitnami Kubectl image for interacting with Kubernetes
   stage: deploy
   script:
-    - kubectl config use-context ${CI_PROJECT_PATH}:first-agent
-    - cat k8s.yaml | sed -e "s,__VERSION__,${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}," | kubectl apply -f -
+    - kubectl config use-context ${CI_PROJECT_PATH}:first-agent # sets the Kubernetes context to the specified project and agent
+    - cat k8s.yaml | sed -e "s,__VERSION__,${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}," | kubectl apply -f - # reads the k8s.yaml file and replaces the __VERSION__ placeholder with the Docker image tag from the build stage, applies the Kubernetes configuration to deploy the app
 
