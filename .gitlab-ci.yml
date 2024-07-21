@@ -10,7 +10,10 @@ variables:
   DOCKER_TLS_VERIFY: 1 # enables TLS verification for secure Docker operations
   DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client" # path to the client TLS certificates
   DOCKER_DRIVER: overlay2 # specifies the storage driver for Docker
-
+  API_VERSION: 0.1
+  STREAMLIT_VERSION: 0.1
+  CI_API_PATH: "api"
+  CI_STREAMLIT_PATH: "streamlit"
 services:
   - docker:20.10.16-dind # Docker-in-Docker (DinD) service image that allows running Docker commands inside a Docker container
 
@@ -24,14 +27,20 @@ build:
     - >- # builds a Docker image from the Dockerfile located in the project directory, tagging it with the commit SHA for versioning
       docker build
       "${CI_PROJECT_DIR}"
-      --tag "${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}"
-    - docker push "${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}" # pushes the built Docker image to the specified registry, making it available for deployment
+      --tag "${CI_REGISTRY}/${CI_API_PATH}:${API_VERSION}"
+    - docker push "${CI_REGISTRY}/${CI_API_PATH}:${API_VERSION}" # pushes the built Docker image to the specified registry, making it available for deployment
+    - >- # builds a Docker image from the Dockerfile located in the project directory, tagging it with the commit SHA for versioning
+      docker build
+      "${CI_PROJECT_DIR}/streamlit"  
+      --tag "${CI_REGISTRY}/${CI_STREAMLIT_PATH}:${STREAMLIT_VERSION}"
+    - docker push "${CI_REGISTRY}/${CI_STREAMLIT_PATH}:${STREAMLIT_VERSION}" # pushes the built Docker image to the specified registry, making it available for deployment
+
 
 deploy:
   image: bitnami/kubectl:latest # uses the latest Bitnami Kubectl image for interacting with Kubernetes
   stage: deploy
   script:
-    - kubectl config use-context default:first-agent # sets the Kubernetes context to the specified project and agent
+    - echo ${CI_PROJECT_PATH}
+    - kubectl config use-context ${CI_PROJECT_PATH}:first-agent # sets the Kubernetes context to the specified project and agent
     - cat k8s.yaml | sed -e "s,__VERSION__,${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}," | kubectl apply -f - # reads the k8s.yaml file and replaces the __VERSION__ placeholder with the Docker image tag from the build stage, applies the Kubernetes configuration to deploy the app
 
-#      --file "${CI_PROJECT_DIR}/Dockerfile"
