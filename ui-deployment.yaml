@@ -20,6 +20,9 @@ spec: # defines the desired state for the deployment
           image: cr.yandex/crpa080g7u2dce8qhsva/streamlit:0.1 # the Docker image used for this container
           ports:
             - containerPort: 3000 # specifies that port 80 should be exposed on the container
+          env:
+            - name: API_URL
+              value: "http://api-service.default.svc.cluster.local"
 
 ---
 apiVersion: v1 # specifies the API version for the Service resource
