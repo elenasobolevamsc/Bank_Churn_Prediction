@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
 import requests
+import os
 from io import BytesIO
+UI_API = os.getenv("UI_API")
 
 uploaded_file = st.file_uploader("Choose your csv or xlsx file", type=["csv", "xlsx"])
 st.sidebar.header("menu")
@@ -24,7 +26,7 @@ if st.sidebar.button('predict'):
 
         data = df.to_json(orient='split')
         payload = {'data': data}
-        result = requests.post('http://api:8000/best_model', json=payload)
+        result = requests.post(f'{UI_API}/best_model', json=payload)
         res = pd.read_json(result.json()['pred'], orient='split')
         res.columns = ['Prediction']
         pred_res = pd.concat([df, res], axis=1)
