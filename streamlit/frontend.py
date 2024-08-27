@@ -3,7 +3,7 @@ import pandas as pd
 import requests
 import os
 from io import BytesIO
-UI_API = os.getenv("UI_API")
+UI_API = 'api'
 
 uploaded_file = st.file_uploader("Choose your csv or xlsx file", type=["csv", "xlsx"])
 st.sidebar.header("menu")
