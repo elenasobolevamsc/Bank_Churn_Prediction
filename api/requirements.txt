@@ -1,3 +1,4 @@
 pandas
 scikit-learn
 joblib
+uvicorn==0.24.0.post1
