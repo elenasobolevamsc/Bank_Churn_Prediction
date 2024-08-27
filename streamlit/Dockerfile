@@ -1,5 +1,8 @@
-FROM python:3.10-slim
-WORKDIR /project
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -8,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt
 
