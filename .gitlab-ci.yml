@@ -11,8 +11,8 @@ variables:
   DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client" # path to the client TLS certificates
   DOCKER_DRIVER: overlay2 # specifies the storage driver for Docker
   PROJECT_NAME: bank-churn-prediction
-  API_VERSION: 0.7
-  STREAMLIT_VERSION: 0.7
+  API_VERSION: 0.8
+  STREAMLIT_VERSION: 0.8
 
 services:
   - docker:20.10.16-dind # Docker-in-Docker (DinD) service image that allows running Docker commands inside a Docker container
