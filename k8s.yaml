@@ -2,7 +2,7 @@
 apiVersion: apps/v1 # specifies the API version for the Deployment resource
 kind: Deployment # defines the type of Kubernetes resource being created
 metadata:
-  name: ui-deployment # the name of the deployment to identify this deployment resource
+  name: ui-__PROJECT_NAME__ # the name of the deployment to identify this deployment resource
   labels:
     app: web # key-value pairs that can be used to organize and select resources
 spec: # defines the desired state for the deployment
@@ -43,7 +43,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: api-__PROJECT_NAME__
 spec:
   replicas: 2
   selector:
