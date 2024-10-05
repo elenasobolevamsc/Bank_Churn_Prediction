@@ -6,7 +6,7 @@ metadata:
   labels:
     app: web # key-value pairs that can be used to organize and select resources
 spec: # defines the desired state for the deployment
-  replicas: 3 # specifies that 3 replicas (pods) of the application should be running
+  replicas: 1 # сделала 1, чтобы уменьшить стоимость (в реальной работе нужно больше для отказоустойчивости, отсутствия downtime при обновлении и возможности поддерживать большее количество пользователей)
   selector:
     matchLabels:
       app: ui # criteria for selecting the pods that this deployment will manage (it selects pods with the label app: web)
@@ -45,7 +45,7 @@ kind: Deployment
 metadata:
   name: api-__PROJECT_NAME__
 spec:
-  replicas: 2
+  replicas: 1 # сделала 1, чтобы уменьшить стоимость (в реальной работе нужно больше для отказоустойчивости, отсутствия downtime при обновлении и возможности поддерживать большее количество пользователей)
   selector:
     matchLabels:
       app: api
